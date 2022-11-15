@@ -1,0 +1,32 @@
+plugin-template() {
+  # Set standard options.
+  # https://dev.to/sso/zsh-plugin-standard-1gpk#:~:text=polluting%20the%20namespace.-,Standard%20Recommended%20Options,-The%20following%20code
+  emulate -L zsh
+  setopt extended_glob warn_create_global typeset_silent no_short_loops \
+         rc_quotes no_auto_pushd
+
+  # Ensure internally used variables are local.
+  # See: https://dev.to/sso/zsh-plugin-standard-1gpk#:~:text=global%20directory%20stack.-,Standard%20Recommended%20Variables,-It%E2%80%99s%20good%20to
+  typeset MATCH REPLY
+  typeset -i MBEGIN MEND
+  typeset -a match mbegin mend reply
+
+  # Don't leak any functions into the global namespace.
+  # Any temporary function definitions should be done after these lines.
+  # See: https://dev.to/sso/zsh-plugin-standard-1gpk#:~:text=initialization%20complete%22%0A%7D-,Preventing%20Function%20Pollution,-When%20writing%20a
+  typeset -ga __plugin_templateef=(${(k)functions})
+  trap \
+    'unset -f -- "${(k)functions[@]:|__plugin_templateef}" &>/dev/null; unset -v __plugin_templateef' \
+    EXIT
+  trap \
+    'unset -f -- "${(k)functions[@]:|__plugin_templateef}" &>/dev/null; unset -v __plugin_templateef; return 1' \
+    INT
+
+  #.plugin-template-temp-foo() {
+  #  :
+  #}
+
+  # Do the thing ...
+}
+
+# vim: set ft=zsh:
