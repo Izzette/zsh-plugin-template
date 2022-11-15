@@ -15,7 +15,7 @@ Plugins[PLUGIN_TEMPLATE_FUNC_DIR]="${0:h}/functions"
 # https://dev.to/sso/zsh-plugin-standard-1gpk#:~:text=%2C%20Zgenom.-,3.%20Binaries%20Directory,-%5B%20binaries%2Ddirectory%20%5D
 if [[ $PMSPEC != *b* &&
       -z "${PATH[(r)${Plugins[PLUGIN_TEMPLATE_BIN_DIR]}]}" ]]; then
-  PATH+=("${Plugins[PLUGIN_TEMPLATE_BIN_DIR]}")
+  PATH+=":${Plugins[PLUGIN_TEMPLATE_BIN_DIR]}"
 fi
 
 # Load functions from the functions/ directory.
