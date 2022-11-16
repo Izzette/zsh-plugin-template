@@ -11,16 +11,20 @@ plugin-template() {
   typeset -i MBEGIN MEND
   typeset -a match mbegin mend reply
 
-  # Don't leak any functions into the global namespace.
+  # Automatically cleanup any functions defined during the execution of this
+  # function.
   # Any temporary function definitions should be done after these lines.
+  # The variable name (here __plugin_templateef) should should be unique for
+  # each function.
   # See: https://dev.to/sso/zsh-plugin-standard-1gpk#:~:text=initialization%20complete%22%0A%7D-,Preventing%20Function%20Pollution,-When%20writing%20a
   typeset -ga __plugin_templateef=(${(k)functions})
   trap \
-    'unset -f -- "${(k)functions[@]:|__plugin_templateef}" &>/dev/null; unset -v __plugin_templateef' \
-    EXIT
-  trap \
-    'unset -f -- "${(k)functions[@]:|__plugin_templateef}" &>/dev/null; unset -v __plugin_templateef; return 1' \
-    INT
+    '(( ${#__plugin_templateef[@]} > 0 )) &&
+       unset -f -- "${(k)functions[@]:|__plugin_templateef}" &>/dev/null;
+     unset -v __plugin_templateef' \
+    EXIT INT
+  # Alternatively a more selective approach can be used, such as:
+  #trap 'unset -f .plugin-template-temp-foo' EXIT INT
 
   #.plugin-template-temp-foo() {
   #  :
